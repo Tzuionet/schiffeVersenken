@@ -5,6 +5,9 @@ Created on Tue Sep 18 08:05:03 2018
 @author: hoehnd
 """
 
+#Konstanten
+GROESSE = 10 #Spielfeldgröße (x und y)
+
 from random import randint
 
 class Schiff(object):
@@ -15,21 +18,45 @@ class Schiff(object):
 class Computer(object):
     
     #def __init__(self):
-        
+
+    def waehleSchiffposition(self, schiff):
+        x = randint(0, GROESSE)
+        y = randint(0, GROESSE)
+        jop = randint(0,2)
+        if jop == 0:
+            richtung = True
+        else:
+            richtung = False
+        try:
+            Meer.setzeSchiff(meerComputer, x, y, richtung, schiff)
+        except:
+            Computer.waehleSchiffposition(meerComputer, schiff)
+
+
     def zug(self):
-        x = randint(0, 8)
-        y = randint(0, 8)
+        x = randint(0, GROESSE)
+        y = randint(0, GROESSE)
         
         if meerSpieler.get(x,y) == 2 or meerSpieler.get(x,y) == 3:
             self.zug()
         else:
             Meer.schiessen(meerSpieler,x,y)
-            #ToDo prüfen ob man gewonnen hat ?
+            #ToDo prüfen ob man gewonnen hat
             
 class Spieler(object):
     
     #def __init__(self):
-        
+
+    def waehleSchiffposition(self, schiff):
+        x = int(input("x: "))
+        y = int(input("y: "))
+        richtung = bool(input("True = Waagerecht | False = Senkrecht"))
+        try:
+            Meer.setzeSchiff(meerSpieler, x, y, richtung, schiff)
+        except:
+            print("Hier kann kein Schiff platziert werden!")
+            Spieler.waehleSchiffposition(meerSpieler, schiff)
+
     def zug(self):
         x = int(input("x: "))
         y = int(input("y: "))
@@ -103,23 +130,50 @@ class Meer(object):
         #Alle Schiffe sind versenkt
         if anzTreffer == 3: #ToDo 3 durch Anzahl der Schiffe*Schifflaenge ersetzen
             return True
-            
-
-
-        
-        
-        
+             
 ###############################################        
 
-meerComputer = Meer(10,10)
-meerSpieler = Meer(10,10)
+#Hilfsvariablen
+ende = False #Wird auf True gesetzt, sobald ein Spieler gewonnen hat.
+zug = True #True = Spielerzug | False = Computerzug
 
-computer = Computer()
-spieler = Spieler()
-            
+#Spielfelder definieren
+meerComputer = Meer(GROESSE,GROESSE)
+meerSpieler = Meer(GROESSE,GROESSE)
+
+#Schiffe definieren            
 schlachtschiff = Schiff(5)
 kreuzer = Schiff(4)
 zerstoerer = Schiff(3)
 uboot = Schiff(2)
 
-print("Los Gehts!")
+#Spieler erstellen
+computer = Computer()
+spieler = Spieler()
+
+#Spieler platziert Schiffe
+print("Platziere deine Flotte.")
+
+print("Platziere dein Schlachtschiff (5)")
+Spieler.waehleSchiffposition(spieler, schlachtschiff)
+
+print("Platziere deinen Kreuzer (4)")
+Spieler.waehleSchiffposition(spieler, kreuzer)
+#ToDo weitere Schiffe platzieren
+
+print("Du hast deine Schiffe platziert.")
+Meer.zeige(meerSpieler)
+
+#Computer platziert Schiffe
+Computer.waehleSchiffposition(computer, schlachtschiff)
+Computer.waehleSchiffposition(computer, kreuzer)
+
+#Jetzt wird gespielt
+#print("Los Gehts!")
+#while (ende == False):
+ #   if(zug == True):
+        #Spielerzug
+  #      zug = False
+  #  else:
+        #Computerzug
+   #     zug = True
