@@ -16,8 +16,8 @@ class Schiff(object):
         self.laenge = laenge
         
 class Computer(object):
-    
-    #def __init__(self):
+   #def __init__(self):
+
 
     def waehleSchiffposition(self, schiff):
         x = randint(0, GROESSE)
@@ -32,20 +32,21 @@ class Computer(object):
         except:
             Computer.waehleSchiffposition(meerComputer, schiff)
 
-
     def zug(self):
-        x = randint(0, GROESSE)
-        y = randint(0, GROESSE)
+        x = randint(0, GROESSE-1)
+        y = randint(0, GROESSE-1)
         
         if meerSpieler.get(x,y) == 2 or meerSpieler.get(x,y) == 3:
-            self.zug()
+            Computer.zug(computer)
         else:
             Meer.schiessen(meerSpieler,x,y)
-            #ToDo prüfen ob man gewonnen hat
+            print("Der Computer hat auf ",x,"/",y,"geschossen.")
+            if Meer.gewonnen(meerSpieler) == True:
+                print("Der Computer hat gewonnen!")
             
 class Spieler(object):
     
-    #def __init__(self):
+   #def __init__(self):
 
     def waehleSchiffposition(self, schiff):
         x = int(input("x: "))
@@ -58,6 +59,7 @@ class Spieler(object):
             Spieler.waehleSchiffposition(meerSpieler, schiff)
 
     def zug(self):
+        print("Du bist am Zug:")
         x = int(input("x: "))
         y = int(input("y: "))
         
@@ -66,7 +68,6 @@ class Spieler(object):
             self.zug()
         else:
             Meer.schiessen(meerComputer,x,y)
-            #ToDo prüfen ob man gewonnen hat ?
             if Meer.gewonnen(meerSpieler) == True:
                 print("Sie haben gewonnen!")
 
@@ -115,27 +116,25 @@ class Meer(object):
                 x += 1
                 
     def schiessen(self,x,y):
-        if self.meer[y][x] == 1:
-            self.meer[y][x] = 3
+        if self.meer[x][y] == 1:
+            self.meer[x][y] = 3
         else:
-            self.meer[y][x] = 2
+            self.meer[x][y] = 2
         self.gewonnen()
             
     def gewonnen(self):
-        anzTreffer = 0
         for i in range(0,self.FelderY):
             for j in range(0,self.FelderX):
-                if self.meer[j][i] == 3:
-                    anzTreffer += 1
+                if self.meer[j][i] == 1:
+                    return False
         #Alle Schiffe sind versenkt
-        if anzTreffer == 3: #ToDo 3 durch Anzahl der Schiffe*Schifflaenge ersetzen
-            return True
-             
+        return True
+    
 ###############################################        
 
 #Hilfsvariablen
-ende = False #Wird auf True gesetzt, sobald ein Spieler gewonnen hat.
 zug = True #True = Spielerzug | False = Computerzug
+ende = False
 
 #Spielfelder definieren
 meerComputer = Meer(GROESSE,GROESSE)
@@ -169,11 +168,20 @@ Computer.waehleSchiffposition(computer, schlachtschiff)
 Computer.waehleSchiffposition(computer, kreuzer)
 
 #Jetzt wird gespielt
-#print("Los Gehts!")
-#while (ende == False):
- #   if(zug == True):
-        #Spielerzug
-  #      zug = False
-  #  else:
-        #Computerzug
-   #     zug = True
+print("Los Gehts!")
+
+while ende == False:
+    #Spielerzug
+    if zug == True:
+        #Spieler.zug(spieler)
+        Meer.zeige(meerComputer)
+        if Meer.gewonnen(meerComputer):
+            ende = True
+        zug = False
+    #Computerzug
+    else:
+        Computer.zug(computer)
+        Meer.zeige(meerSpieler)
+        if Meer.gewonnen(meerSpieler):
+            ende = True
+        zug = True
