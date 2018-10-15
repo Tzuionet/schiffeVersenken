@@ -45,8 +45,9 @@ class Computer(object):
                 print("Der Computer hat gewonnen!")
             
 class Spieler(object):
-    
-   #def __init__(self):
+
+    def __init__(self, flotte):
+        self.flotte = flotte
 
     def waehleSchiffposition(self, schiff):
         x = int(input("x: "))
@@ -136,29 +137,34 @@ class Meer(object):
 zug = True #True = Spielerzug | False = Computerzug
 ende = False
 
+#Spieler erstellen
+computer = Computer()
+spieler = Spieler([5,4,3,2])
+
 #Spielfelder definieren
 meerComputer = Meer(GROESSE,GROESSE)
 meerSpieler = Meer(GROESSE,GROESSE)
 
-#Schiffe definieren            
-schlachtschiff = Schiff(5)
-kreuzer = Schiff(4)
-zerstoerer = Schiff(3)
-uboot = Schiff(2)
-
-#Spieler erstellen
-computer = Computer()
-spieler = Spieler()
-
 #Spieler platziert Schiffe
 print("Platziere deine Flotte.")
 
-print("Platziere dein Schlachtschiff (5)")
-Spieler.waehleSchiffposition(spieler, schlachtschiff)
+for x in spieler.flotte:
 
-print("Platziere deinen Kreuzer (4)")
-Spieler.waehleSchiffposition(spieler, kreuzer)
-#ToDo weitere Schiffe platzieren
+    schiffname = "Spieler"
+
+    if x == 5:
+        schiffname = "schlachtschiff" + schiffname
+    elif x == 4:
+        schiffname = "kreuzer" + schiffname
+    elif x == 3:
+        schiffname = "zerstoerer" + schiffname
+    elif x == 2:
+        schiffname = "uboot" + schiffname
+
+    schiffname = Schiff(x)
+
+    print("Platziere dein Schiff")
+    spieler.waehleSchiffposition(schiffname)
 
 print("Du hast deine Schiffe platziert.")
 Meer.zeige(meerSpieler)
